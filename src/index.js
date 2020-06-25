@@ -1,6 +1,6 @@
 console.log('%c HI', 'color: firebrick')
 
-const breeds = []
+// let breeds = []
 
 const imgUrl = "https://dog.ceo/api/breeds/image/random/4"
 const breedUrl = 'https://dog.ceo/api/breeds/list/all'
@@ -9,10 +9,6 @@ const listElements = document.querySelectorAll("li")
 document.addEventListener('DOMContentLoaded', function() {
     fetchImages(imgUrl)
     fetchBreeds(breedUrl)
-
-    const breedsUl = document.querySelector("#dog-breeds")
-    const dropdownValue = document.querySelector("#breed-dropdown")
-    // dropdownValue.addEventListener("change", filterBreeds(breedsUl))
 })
 
 function fetchImages(url) {
@@ -21,10 +17,14 @@ function fetchImages(url) {
     .then(json => addImagesToDom(json))
 }
 
-function fetchBreeds(url) {
+function fetchBreeds(url, filter) {
     fetch(url)
     .then(resp => resp.json())
-    .then(json => addBreedsToDom(json))
+    .then(json => 
+        // breeds = [...Object.keys(json.message)]
+        // console.log(breeds)
+        // console.log(Object.keys(json.message))
+        addBreedsToDom(json, filter))
     addBreeds() //why are we calling this function here?
 }
 
@@ -37,21 +37,28 @@ function addImagesToDom(images) {
     });
 }
 
-function addBreedsToDom(breeds) {
+function addBreedsToDom(breeds, filter) {
     const breedsUl = document.querySelector("#dog-breeds")
+    breedsUl.innerHTML = ""
     for (breed in breeds.message) {
         const breedLi = document.createElement("li")
-        breedLi.innerText = breed 
-        breedsUl.appendChild(breedLi)
+        breedLi.innerText = breed
         breedLi.addEventListener("click", changeColor)
+        if (filter) {
+            if (breed[0] === filter) {
+                // const breedLi = document.createElement("li")
+                // breedLi.innerText = breed 
+                breedsUl.appendChild(breedLi)
+                // breedLi.addEventListener("click", changeColor)
+            }
+        } else {
+            breedsUl.appendChild(breedLi)
+        }
     }
 }
 
 function filterBreeds(letter) {
-    // breeds.filter(function(breed) {
-        // return breed.value[0] === dropdownValue
-        console.log("Inside filter breeds")
-    // })
+    fetchBreeds(breedUrl, letter)    
 }
 
 function addBreeds() {
